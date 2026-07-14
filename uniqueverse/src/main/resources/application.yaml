@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: uniqueverse
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/uniqueVerse
+    username: postgres
+    password: Magellan@Core98
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+    open-in-view: false
