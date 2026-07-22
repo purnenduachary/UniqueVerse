@@ -8,7 +8,7 @@ public class UniqueVerseApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(UniqueVerseApplication.class, args);
-		System.out.println("Hey Macy Let's Rev up");
+//		System.out.println("Hey Macy Let's Rev up");
 	}
 
 }

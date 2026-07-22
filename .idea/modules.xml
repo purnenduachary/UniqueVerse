@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/uniqueverse.iml" filepath="$PROJECT_DIR$/.idea/uniqueverse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uniqueverse/uniqueverse.iml" filepath="$PROJECT_DIR$/uniqueverse/uniqueverse.iml" />
     </modules>
   </component>
 </project>
