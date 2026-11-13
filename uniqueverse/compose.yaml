@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: uniqueverse-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: uniqueVerse
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Magellan@Core98
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - uniqueverse-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  uniqueverse-postgres-data:
