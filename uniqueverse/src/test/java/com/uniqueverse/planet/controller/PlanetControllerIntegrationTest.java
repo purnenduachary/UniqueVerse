@@ -16,6 +16,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.springframework.http.MediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -62,4 +66,28 @@ class PlanetControllerIntegrationTest {
                 .andExpect(jsonPath("$.message")
                         .value("Planet not found with id: 999"));
     }
+
+    @Test
+    void createPlanet_shouldReturnCreatedPlanet() throws Exception {
+
+        String requestBody = """
+            {
+                "name": "Pluto",
+                "description": "A dwarf planet in the Kuiper Belt.",
+                "distanceFromSunKm": 5900000000,
+                "radiusKm": 1188.3,
+                "massKg": 1.303e22,
+                "orbitalPeriodDays": 90560,
+                "rotationPeriodHours": -153.3
+            }
+            """;
+
+        mockMvc.perform(post("/api/v1/planets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value("Pluto"));
+    }
+
 }

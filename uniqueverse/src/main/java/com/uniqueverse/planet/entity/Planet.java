@@ -18,6 +18,9 @@ public class Planet {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "interesting_fact", nullable = false, columnDefinition = "TEXT")
+    private String interestingFact;
+
     @Column(name = "distance_from_sun_km")
     private Double distanceFromSunKm;
 
@@ -33,11 +36,19 @@ public class Planet {
     @Column(name = "rotation_period_hours")
     private Double rotationPeriodHours;
 
-    @Column(name = "created_at", nullable = false)
-    private java.time.LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+
+    @Column(nullable = false, length = 50)
+    private String type;
 
     // Getters and setters
-
 
     public Long getId() {
         return id;
@@ -69,6 +80,14 @@ public class Planet {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getInterestingFact() {
+        return interestingFact;
+    }
+
+    public void setInterestingFact(String interestingFact) {
+        this.interestingFact = interestingFact;
     }
 
     public Double getDistanceFromSunKm() {
@@ -109,5 +128,13 @@ public class Planet {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
