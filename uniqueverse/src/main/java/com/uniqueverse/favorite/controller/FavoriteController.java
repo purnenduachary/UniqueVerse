@@ -1,7 +1,6 @@
 package com.uniqueverse.favorite.controller;
 
 import com.uniqueverse.favorite.dto.FavoriteResponse;
-import com.uniqueverse.favorite.entity.Favorite;
 import com.uniqueverse.favorite.service.FavoriteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +19,9 @@ public class FavoriteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Favorite createFavorite(@RequestParam Long planetId) {
+    public FavoriteResponse createFavorite(@RequestParam Long planetId) {
 
-        Favorite favorite = favoriteService.createFavorite(planetId);
-
-        // Transaction has already ended here
-        favorite.getPlanet().getName();
-
-        return favorite;
+        return favoriteService.createFavorite(planetId);
     }
 
     @GetMapping("/{id}")
@@ -36,9 +30,9 @@ public class FavoriteController {
         return favoriteService.getFavoriteById(id);
     }
 
-
     @GetMapping
     public List<FavoriteResponse> getAllFavorites() {
+
         return favoriteService.getAllFavorites();
     }
 }

@@ -26,7 +26,7 @@ public class FavoriteService {
     }
 
     @Transactional
-    public Favorite createFavorite(Long planetId) {
+    public FavoriteResponse createFavorite(Long planetId) {
 
         Planet planet = planetRepository.findById(planetId)
                 .orElseThrow(() ->
@@ -35,7 +35,13 @@ public class FavoriteService {
 
         Favorite favorite = new Favorite(planet);
 
-        return favoriteRepository.save(favorite);
+        Favorite savedFavorite = favoriteRepository.save(favorite);
+
+        return new FavoriteResponse(
+                savedFavorite.getId(),
+                planet.getId(),
+                planet.getName()
+        );
     }
 
 
