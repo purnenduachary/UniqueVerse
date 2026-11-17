@@ -8,6 +8,8 @@ public class UniqueVerseApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(UniqueVerseApplication.class, args);
+
+		System.out.println("UniqueVerse is up and running!");
 	}
 
 }
