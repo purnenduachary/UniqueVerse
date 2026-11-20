@@ -4,6 +4,7 @@ import com.uniqueverse.auth.dto.RegisterRequest;
 import com.uniqueverse.auth.dto.UserResponse;
 import com.uniqueverse.auth.entity.User;
 import com.uniqueverse.auth.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
 
 
@@ -29,12 +31,14 @@ public class AuthService {
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
-            JwtService jwtService) {
+            JwtService jwtService,
+            UserDetailsService userDetailsService) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Transactional
@@ -74,23 +78,16 @@ public class AuthService {
         );
 
         UserDetails userDetails =
-                userRepository.findByUsername(request.getUsername())
-                        .map(user -> org.springframework.security.core.userdetails.User
-                                .withUsername(user.getUsername())
-                                .password(user.getPassword())
-                                .authorities("ROLE_" + user.getRole())
-                                .build())
-                        .orElseThrow(() ->
-                                new IllegalArgumentException(
-                                        "Invalid username or password"
-                                ));
+                userDetailsService.loadUserByUsername(
+                        request.getUsername()
+                );
 
         String token = jwtService.generateToken(userDetails);
 
         return new LoginResponse(
                 token,
                 "Bearer",
-                900000
+                jwtService.getExpirationMs()
         );
     }
 
