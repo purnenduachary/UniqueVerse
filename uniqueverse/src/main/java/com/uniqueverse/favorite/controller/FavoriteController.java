@@ -49,4 +49,16 @@ public class FavoriteController {
                 authentication.getName()
         );
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFavorite(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        favoriteService.deleteFavorite(
+                id,
+                authentication.getName()
+        );
+    }
 }

@@ -2,6 +2,7 @@ package com.uniqueverse.favorite.service;
 
 import com.uniqueverse.auth.entity.User;
 import com.uniqueverse.auth.repository.UserRepository;
+import com.uniqueverse.exception.DuplicateResourceException;
 import com.uniqueverse.exception.ResourceNotFoundException;
 import com.uniqueverse.favorite.dto.FavoriteResponse;
 import com.uniqueverse.favorite.entity.Favorite;
@@ -34,6 +35,15 @@ public class FavoriteService {
     public FavoriteResponse createFavorite(
             Long planetId,
             String username) {
+
+        if (favoriteRepository.existsByUserUsernameAndPlanetId(
+                username,
+                planetId)) {
+
+            throw new DuplicateResourceException(
+                    "Planet is already in favorites"
+            );
+        }
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
@@ -88,5 +98,20 @@ public class FavoriteService {
                         favorite.getPlanet().getName()
                 ))
                 .toList();
+    }
+
+    @Transactional
+    public void deleteFavorite(
+            Long id,
+            String username) {
+
+        Favorite favorite =
+                favoriteRepository
+                        .findByIdAndUsername(id, username)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Favorite not found with id: " + id));
+
+        favoriteRepository.delete(favorite);
     }
 }

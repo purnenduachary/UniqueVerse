@@ -31,4 +31,20 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
             @Param("id") Long id,
             @Param("username") String username
     );
+
+    @Query("""
+    SELECT f
+    FROM Favorite f
+    WHERE f.id = :id
+    AND f.user.username = :username
+    """)
+    Optional<Favorite> findByIdAndUsername(
+            @Param("id") Long id,
+            @Param("username") String username
+    );
+
+    boolean existsByUserUsernameAndPlanetId(
+            String username,
+            Long planetId
+    );
 }
