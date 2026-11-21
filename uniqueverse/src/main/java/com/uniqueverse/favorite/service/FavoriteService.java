@@ -1,5 +1,7 @@
 package com.uniqueverse.favorite.service;
 
+import com.uniqueverse.auth.entity.User;
+import com.uniqueverse.auth.repository.UserRepository;
 import com.uniqueverse.exception.ResourceNotFoundException;
 import com.uniqueverse.favorite.dto.FavoriteResponse;
 import com.uniqueverse.favorite.entity.Favorite;
@@ -16,24 +18,34 @@ public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final PlanetRepository planetRepository;
+    private final UserRepository userRepository;
 
     public FavoriteService(
             FavoriteRepository favoriteRepository,
-            PlanetRepository planetRepository) {
+            PlanetRepository planetRepository,
+            UserRepository userRepository) {
 
         this.favoriteRepository = favoriteRepository;
         this.planetRepository = planetRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
-    public FavoriteResponse createFavorite(Long planetId) {
+    public FavoriteResponse createFavorite(
+            Long planetId,
+            String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"));
 
         Planet planet = planetRepository.findById(planetId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Planet not found with id: " + planetId));
 
-        Favorite favorite = new Favorite(planet);
+        Favorite favorite = new Favorite(user, planet);
 
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
@@ -44,14 +56,17 @@ public class FavoriteService {
         );
     }
 
-
     @Transactional(readOnly = true)
-    public FavoriteResponse getFavoriteById(Long id) {
+    public FavoriteResponse getFavoriteById(
+            Long id,
+            String username) {
 
-        Favorite favorite = favoriteRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Favorite not found with id: " + id));
+        Favorite favorite =
+                favoriteRepository
+                        .findByIdWithPlanetAndUsername(id, username)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Favorite not found with id: " + id));
 
         return new FavoriteResponse(
                 favorite.getId(),
@@ -60,11 +75,12 @@ public class FavoriteService {
         );
     }
 
-
     @Transactional(readOnly = true)
-    public List<FavoriteResponse> getAllFavorites() {
+    public List<FavoriteResponse> getAllFavorites(
+            String username) {
 
-        return favoriteRepository.findAllWithPlanet()
+        return favoriteRepository
+                .findAllWithPlanetByUsername(username)
                 .stream()
                 .map(favorite -> new FavoriteResponse(
                         favorite.getId(),
