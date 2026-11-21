@@ -2,6 +2,7 @@ package com.uniqueverse.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -33,15 +34,45 @@ public class SecurityConfig {
                         ))
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // Public authentication endpoints
                         .requestMatchers(
                                 "/api/v1/auth/register",
                                 "/api/v1/auth/login"
                         ).permitAll()
 
+                        // Authenticated users
                         .requestMatchers("/api/v1/auth/me")
                         .authenticated()
 
-                        .anyRequest().permitAll()
+                        // Public planet reads
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/planets/**"
+                        ).permitAll()
+
+                        // ADMIN-only planet management
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/v1/planets/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/v1/planets/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/v1/planets/**"
+                        ).hasRole("ADMIN")
+
+                        // Authenticated users
+                        .requestMatchers("/api/v1/favorites/**")
+                        .authenticated()
+
+                        // Everything else is blocked
+                        .anyRequest().denyAll()
                 )
 
                 .httpBasic(httpBasic -> httpBasic.disable())
