@@ -41,6 +41,9 @@ public class SecurityConfig {
                                 "/api/v1/auth/login"
                         ).permitAll()
 
+                        .requestMatchers("/api/v1/apod")
+                        .permitAll()
+
                         // Authenticated users
                         .requestMatchers("/api/v1/auth/me")
                         .authenticated()
